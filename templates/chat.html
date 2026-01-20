@@ -89,14 +89,21 @@ imageInput.onchange = () => {
 };
 
 function recordAudio() {
+  const micBtn = event.target;
+
   if (recorder && recorder.state === "recording") {
     recorder.stop();
+    micBtn.classList.remove("recording");
+    micBtn.textContent = "🎤";
     return;
   }
 
   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     recorder = new MediaRecorder(stream);
     recorder.start();
+    micBtn.classList.add("recording");
+    micBtn.textContent = "⏹";
+
     recorder.ondataavailable = e => chunks.push(e.data);
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: "audio/webm" });
@@ -113,6 +120,7 @@ function recordAudio() {
   });
 }
 
+
 function toggleTheme() {
   document.body.classList.toggle("light");
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
@@ -128,3 +136,4 @@ function panic() {
 
 </body>
 </html>
+
