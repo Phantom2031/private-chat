@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lovewillwin</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <h3>Lovers Talk</h3>
+    <div id="chat"></div>
+    <input id="msg" placeholder="Type message">
+    <button onclick="sendMsg()">Send</button>
+
+    <script>
+        const socket = io();
+        const chat = document.getElementById("chat");
+
+        socket.on("message", msg => {
+            const p = document.createElement("p");
+            p.textContent = msg;
+            chat.appendChild(p);
+        });
+
+        function sendMsg() {
+            const input = document.getElementById("msg");
+            socket.send(input.value);
+            input.value = "";
+        }
+    </script>
+</body>
+</html>
