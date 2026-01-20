@@ -73,11 +73,12 @@ header {
 }
 
 #chat {
-  padding: 10px;
+  flex: 1;
+  padding: 12px;
   padding-bottom: 90px;
   overflow-y: auto;
-  height: calc(100vh - 120px);
 }
+
 
 .msg {
   max-width: 75%;
@@ -120,3 +121,4 @@ footer button {
   border: none;
   background: var(--accent);
 }
+
