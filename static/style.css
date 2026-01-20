@@ -64,13 +64,14 @@ header {
 
 .audio-msg {
   padding: 8px 10px;
+  max-width: 240px;
 }
 
 .audio-msg audio {
-  width: 180px;
-  height: 34px;
-  outline: none;
+  width: 200px;
+  height: 32px;
 }
+
 
 }
 
@@ -177,6 +178,7 @@ footer button {
   font-size: 15px;
   font-weight: 600;
 }
+
 
 
 
