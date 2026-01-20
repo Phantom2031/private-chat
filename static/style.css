@@ -60,6 +60,18 @@ header {
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 14px;
+  /* ===== AUDIO MESSAGE ===== */
+
+.audio-msg {
+  padding: 8px 10px;
+}
+
+.audio-msg audio {
+  width: 180px;
+  height: 34px;
+  outline: none;
+}
+
 }
 
 .me {
@@ -165,5 +177,6 @@ footer button {
   font-size: 15px;
   font-weight: 600;
 }
+
 
 
