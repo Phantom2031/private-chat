@@ -1,10 +1,10 @@
-/* THEME */
 :root {
   --bg: #0f172a;
   --card: #111827;
   --me: #22c55e;
   --other: #1f2933;
   --text: #e5e7eb;
+  --danger: #ef4444;
 }
 
 body.light {
@@ -27,42 +27,6 @@ body {
   height: 100vh;
 }
 
-/* LOGIN */
-.login-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-wrapper {
-  width: 100%;
-  max-width: 320px;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.login-wrapper h1 {
-  margin-bottom: 30px;
-  font-weight: 600;
-}
-
-.login-wrapper input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 14px;
-  border-radius: 10px;
-  border: none;
-}
-
-.login-wrapper button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #22c55e;
-  font-weight: 600;
-}
-
 /* HEADER */
 header {
   padding: 12px;
@@ -79,7 +43,7 @@ header {
 }
 
 .panic {
-  background: #ef4444;
+  background: var(--danger);
   color: white;
 }
 
@@ -93,9 +57,9 @@ header {
 
 .msg {
   max-width: 70%;
-  margin-bottom: 8px;
   padding: 10px;
-  border-radius: 12px;
+  margin-bottom: 8px;
+  border-radius: 14px;
 }
 
 .me {
@@ -108,7 +72,7 @@ header {
   background: var(--other);
 }
 
-/* IMAGE FIX */
+/* IMAGE */
 .chat-img {
   max-width: 200px;
   max-height: 200px;
@@ -130,6 +94,7 @@ footer {
   padding: 10px;
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 footer input {
@@ -143,4 +108,12 @@ footer button {
   padding: 10px;
   border-radius: 50%;
   border: none;
+  font-size: 18px;
+}
+
+/* 🎤 RECORDING STATE */
+#micBtn.recording {
+  background: var(--danger);
+  color: white;
+  transform: scale(1.2);
 }
