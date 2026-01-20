@@ -1,11 +1,8 @@
-body {
-  border: 10px solid red !important;
-}
-
 :root {
   --bg: #0f172a;
   --card: #111827;
   --accent: #22c55e;
+  --danger: #ef4444;
   --me: #22c55e;
   --other: #1f2933;
   --text: #e5e7eb;
@@ -21,7 +18,7 @@ body.light {
 
 * {
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
@@ -29,53 +26,44 @@ body {
   background: var(--bg);
   color: var(--text);
   height: 100vh;
-}
-
-/* LOGIN */
-.login {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  flex-direction: column;
 }
 
-.login-box {
-  background: var(--card);
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 350px;
-}
-
-.login-box h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.login-box input,
-.login-box button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: none;
-}
-
-.login-box button {
-  background: var(--accent);
-  color: black;
-  font-weight: bold;
-}
-
-/* CHAT */
+/* HEADER */
 header {
-  padding: 12px;
   background: var(--card);
+  padding: 12px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+header span {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.header-actions button {
+  font-size: 18px;
+  padding: 10px 12px;
+  margin-left: 8px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-btn {
+  background: #334155;
+  color: white;
+}
+
+.panic-btn {
+  background: var(--danger);
+  color: white;
+}
+
+/* CHAT */
 #chat {
   flex: 1;
   padding: 12px;
@@ -83,12 +71,12 @@ header {
   overflow-y: auto;
 }
 
-
 .msg {
   max-width: 75%;
-  padding: 10px;
+  padding: 10px 12px;
   margin-bottom: 8px;
-  border-radius: 10px;
+  border-radius: 12px;
+  font-size: 15px;
   word-wrap: break-word;
 }
 
@@ -102,29 +90,33 @@ header {
   background: var(--other);
 }
 
+/* FOOTER */
 footer {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  padding: 10px;
+  left: 0;
+  right: 0;
   background: var(--card);
+  padding: 10px;
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  align-items: center;
+}
+
+footer button {
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: #334155;
+  color: white;
 }
 
 footer input {
   flex: 1;
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: 20px;
   border: none;
+  font-size: 15px;
 }
-
-footer button {
-  padding: 10px;
-  border-radius: 50%;
-  border: none;
-  background: var(--accent);
-}
-
-
-
