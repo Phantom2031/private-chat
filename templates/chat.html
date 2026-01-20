@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <title>Notes</title>
 </head>
@@ -93,3 +94,4 @@ function panic() {
 </script>
 </body>
 </html>
+
