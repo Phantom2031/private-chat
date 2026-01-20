@@ -34,7 +34,8 @@ def chat():
 def handle_message(msg):
     user = session.get("user")
     if user:
-        send(f"{user}: {msg}", broadcast=True)
+        send(msg, broadcast=True)
+
 
 
 if __name__ == "__main__":
@@ -45,4 +46,3 @@ socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 @socketio.on("disconnect")
 def handle_disconnect():
     pass
-
