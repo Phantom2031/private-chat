@@ -104,29 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-  /* ================= 🎤 MIC (ANDROID SAFE) ================= */
-  micBtn.addEventListener("pointerdown", async (e) => {
-    e.preventDefault();
-    chunks = [];
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch {
-      alert("Microphone permission denied");
-      return;
-    }
-
-    recorder = new MediaRecorder(stream, {
-      mimeType: "audio/webm;codecs=opus"
-    });
-
-    recorder.ondataavailable = e => {
-      if (e.data.size > 0) chunks.push(e.data);
-    };
-
-    recorder.start();
-    micBtn.classList.add("recording");
-  });
+  /* ================= 🎤 MIC (MOBILE SAFE HOLD) ================= */
 
   const stopRecording = () => {
     if (!recorder || recorder.state !== "recording") return;
@@ -153,9 +131,35 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   };
 
-  micBtn.addEventListener("pointerup", stopRecording);
-  micBtn.addEventListener("pointercancel", stopRecording);
-  micBtn.addEventListener("pointerleave", stopRecording);
+  micBtn.addEventListener("touchstart", async (e) => {
+    e.preventDefault();
+    chunks = [];
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      alert("Microphone permission denied");
+      return;
+    }
+
+    recorder = new MediaRecorder(stream, {
+      mimeType: "audio/webm;codecs=opus"
+    });
+
+    recorder.ondataavailable = e => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+
+    recorder.start();
+    micBtn.classList.add("recording");
+  });
+
+  micBtn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    stopRecording();
+  });
+
+  micBtn.addEventListener("touchcancel", stopRecording);
 
   /* ================= UI ================= */
   window.toggleTheme = () => {
