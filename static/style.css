@@ -1,0 +1,130 @@
+body {
+  border: 10px solid red !important;
+}
+
+:root {
+  --bg: #0f172a;
+  --card: #111827;
+  --accent: #22c55e;
+  --me: #22c55e;
+  --other: #1f2933;
+  --text: #e5e7eb;
+}
+
+body.light {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --me: #dcf8c6;
+  --other: #e5e7eb;
+  --text: #111827;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+}
+
+/* LOGIN */
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-box {
+  background: var(--card);
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 350px;
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-box input,
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.login-box button {
+  background: var(--accent);
+  color: black;
+  font-weight: bold;
+}
+
+/* CHAT */
+header {
+  padding: 12px;
+  background: var(--card);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#chat {
+  flex: 1;
+  padding: 12px;
+  padding-bottom: 90px;
+  overflow-y: auto;
+}
+
+
+.msg {
+  max-width: 75%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  word-wrap: break-word;
+}
+
+.me {
+  background: var(--me);
+  color: black;
+  margin-left: auto;
+}
+
+.other {
+  background: var(--other);
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  background: var(--card);
+  display: flex;
+  gap: 6px;
+}
+
+footer input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+}
+
+footer button {
+  padding: 10px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+}
+
+
+
