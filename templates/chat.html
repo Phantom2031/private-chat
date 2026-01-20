@@ -44,10 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const imageInput = document.getElementById("imageInput");
   const micBtn = document.getElementById("micBtn");
 
-  let recorder;
+  let recorder = null;
   let chunks = [];
+  let stream = null;
 
-  // RECEIVE MESSAGES
+  /* ================= RECEIVE ================= */
   socket.on("receive_message", data => {
     const div = document.createElement("div");
     div.className = "msg " + (data.user === me ? "me" : "other");
@@ -76,95 +77,90 @@ document.addEventListener("DOMContentLoaded", () => {
     chat.scrollTop = chat.scrollHeight;
   });
 
-  // SEND TEXT
-  window.sendText = function () {
+  /* ================= SEND TEXT ================= */
+  window.sendText = () => {
+    if (!msgInput) return;
     const text = msgInput.value.trim();
     if (!text) return;
     socket.emit("send_message", { type: "text", content: text });
     msgInput.value = "";
   };
 
-  // IMAGE
-  window.pickImage = function () {
-    imageInput.click();
+  /* ================= IMAGE ================= */
+  window.pickImage = () => {
+    if (imageInput) imageInput.click();
   };
 
-  imageInput.addEventListener("change", () => {
-    const file = imageInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      socket.emit("send_message", {
-        type: "image",
-        content: reader.result
+  if (imageInput) {
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        socket.emit("send_message", {
+          type: "image",
+          content: reader.result
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* ================= 🎤 MIC (ANDROID SAFE) ================= */
+  if (micBtn) {
+
+    micBtn.addEventListener("pointerdown", async (e) => {
+      e.preventDefault();
+      chunks = [];
+
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      recorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm;codecs=opus"
       });
-    };
-    reader.readAsDataURL(file);
-  });
 
-let recorder;
-let chunks = [];
-let stream;
+      recorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
 
- // 🎤 HOLD TO RECORD — ANDROID SAFE
-micBtn.addEventListener("pointerdown", async (e) => {
-  e.preventDefault();
+      recorder.start();
+      micBtn.classList.add("recording");
+    });
 
-  chunks = [];
+    const stopRecording = () => {
+      if (!recorder || recorder.state !== "recording") return;
 
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder.stop();
+      micBtn.classList.remove("recording");
 
-  recorder = new MediaRecorder(stream, {
-    mimeType: "audio/webm;codecs=opus"
-  });
+      recorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
 
-  recorder.ondataavailable = (e) => {
-    if (e.data.size > 0) {
-      chunks.push(e.data);
-    }
-  };
+        if (!chunks.length) return;
 
-  recorder.start();
-  micBtn.classList.add("recording");
-});
-
-// stop on release
-function stopRecording() {
-  if (!recorder || recorder.state !== "recording") return;
-
-  recorder.stop();
-  micBtn.classList.remove("recording");
-
-  recorder.onstop = () => {
-    stream.getTracks().forEach(t => t.stop());
-
-    if (chunks.length === 0) return; // prevents 0:00 audio
-
-    const blob = new Blob(chunks, { type: "audio/webm" });
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      socket.emit("send_message", {
-        type: "audio",
-        content: reader.result
-      });
+        const blob = new Blob(chunks, { type: "audio/webm" });
+        const reader = new FileReader();
+        reader.onload = () => {
+          socket.emit("send_message", {
+            type: "audio",
+            content: reader.result
+          });
+        };
+        reader.readAsDataURL(blob);
+      };
     };
 
-    reader.readAsDataURL(blob);
-  };
-}
+    micBtn.addEventListener("pointerup", stopRecording);
+    micBtn.addEventListener("pointercancel", stopRecording);
+    micBtn.addEventListener("pointerleave", stopRecording);
+  }
 
-micBtn.addEventListener("pointerup", stopRecording);
-micBtn.addEventListener("pointercancel", stopRecording);
-micBtn.addEventListener("pointerleave", stopRecording);
-
-  // THEME
-  window.toggleTheme = function () {
+  /* ================= UI ================= */
+  window.toggleTheme = () => {
     document.body.classList.toggle("light");
   };
 
-  // PANIC
-  window.panic = function () {
+  window.panic = () => {
     socket.disconnect();
     chat.innerHTML = "";
     location.reload();
@@ -174,8 +170,10 @@ micBtn.addEventListener("pointerleave", stopRecording);
 </script>
 
 
+
 </body>
 </html>
+
 
 
 
