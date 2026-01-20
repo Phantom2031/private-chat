@@ -127,28 +127,33 @@ document.addEventListener("DOMContentLoaded", () => {
       micBtn.classList.add("recording");
     });
 
-    const stopRecording = () => {
-      if (!recorder || recorder.state !== "recording") return;
+   const stopRecording = () => {
+  if (!recorder || recorder.state !== "recording") return;
 
-      recorder.stop();
-      micBtn.classList.remove("recording");
+  recorder.stop();
+  micBtn.classList.remove("recording");
 
-      recorder.onstop = () => {
-        stream.getTracks().forEach(t => t.stop());
+  recorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
 
-        if (!chunks.length) return;
+    if (!chunks.length) return;
 
-        const blob = new Blob(chunks, { type: "audio/webm" });
-        const reader = new FileReader();
-        reader.onload = () => {
-          socket.emit("send_message", {
-            type: "audio",
-            content: reader.result
-          });
-        };
-        reader.readAsDataURL(blob);
-      };
+    const blob = new Blob(chunks, { type: "audio/webm" });
+
+    // discard very tiny junk clips
+    if (blob.size < 1500) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      socket.emit("send_message", {
+        type: "audio",
+        content: reader.result   // ✅ base64, works everywhere
+      });
     };
+    reader.readAsDataURL(blob);
+  };
+};
+
 
     micBtn.addEventListener("pointerup", stopRecording);
     micBtn.addEventListener("pointercancel", stopRecording);
@@ -173,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
