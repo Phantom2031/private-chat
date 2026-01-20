@@ -3,44 +3,57 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <title>Notes</title>
 </head>
+
 <body>
 
 <header>
   <span>Notes</span>
-  <div>
-    <button onclick="toggleTheme()">🌙</button>
-    <button onclick="panic()">🚨</button>
+  <div class="header-actions">
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+    <button class="panic-btn" onclick="panic()">🚨</button>
   </div>
 </header>
 
 <div id="chat"></div>
 
 <footer>
-  <button onclick="record()">🎤</button>
-  <input id="msg" placeholder="Type message">
-  <button onclick="send()">➤</button>
+  <button onclick="pickImage()">📎</button>
+  <button onclick="recordAudio()">🎤</button>
+  <input id="msg" placeholder="Type a message">
+  <button onclick="sendText()">➤</button>
 </footer>
+
+<input type="file" id="imageInput" accept="image/*" hidden>
 
 <script>
 const socket = io();
 const me = "{{ username }}";
 const chat = document.getElementById("chat");
+const imageInput = document.getElementById("imageInput");
+
 let recorder, chunks = [];
+
+// LOAD THEME
+if (localStorage.theme === "light") {
+  document.body.classList.add("light");
+}
 
 socket.on("receive_message", data => {
   const div = document.createElement("div");
-  div.classList.add("msg");
-  div.classList.add(data.user === me ? "me" : "other");
+  div.classList.add("msg", data.user === me ? "me" : "other");
 
   if (data.type === "text") {
     div.innerHTML = data.content.replace(
       /(https?:\/\/\S+)/g,
       '<a href="$1" target="_blank">$1</a>'
     );
+  }
+
+  if (data.type === "image") {
+    div.innerHTML = `<img src="${data.content}" style="max-width:200px;border-radius:10px;">`;
   }
 
   if (data.type === "audio") {
@@ -51,29 +64,47 @@ socket.on("receive_message", data => {
   chat.scrollTop = chat.scrollHeight;
 });
 
-function send() {
-  const i = msg.value.trim();
-  if (!i) return;
-  socket.emit("send_message", {type:"text", content:i});
+function sendText() {
+  const text = msg.value.trim();
+  if (!text) return;
+  socket.emit("send_message", { type: "text", content: text });
   msg.value = "";
 }
 
-function record() {
+function pickImage() {
+  imageInput.click();
+}
+
+imageInput.onchange = () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    socket.emit("send_message", {
+      type: "image",
+      content: reader.result
+    });
+  };
+  reader.readAsDataURL(file);
+};
+
+function recordAudio() {
   if (recorder && recorder.state === "recording") {
     recorder.stop();
     return;
   }
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     recorder = new MediaRecorder(stream);
     recorder.start();
     recorder.ondataavailable = e => chunks.push(e.data);
     recorder.onstop = () => {
-      const blob = new Blob(chunks, {type:"audio/webm"});
+      const blob = new Blob(chunks, { type: "audio/webm" });
       chunks = [];
       const reader = new FileReader();
       reader.onload = () => {
         socket.emit("send_message", {
-          type:"audio",
+          type: "audio",
           content: reader.result
         });
       };
@@ -84,14 +115,16 @@ function record() {
 
 function toggleTheme() {
   document.body.classList.toggle("light");
+  localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
 }
 
 function panic() {
   socket.disconnect();
   chat.innerHTML = "";
+  localStorage.clear();
   location.reload();
 }
 </script>
+
 </body>
 </html>
-
