@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, redirect, session
-from flask_socketio import SocketIO, send
-import secrets
-import os
+from flask_socketio import SocketIO, emit
+import secrets, os
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 socketio = SocketIO(app)
 
-# CHANGE THESE TO YOUR OWN
+# CHANGE THESE
 USERS = {
     "itx_ankelet25": "Hydrogen",
     "jatin25": "Zinc"
@@ -21,18 +20,25 @@ def login():
         if USERS.get(u) == p:
             session["user"] = u
             return redirect("/chat")
-        return "Invalid credentials"
+        return "Invalid login"
     return render_template("index.html")
 
 @app.route("/chat")
 def chat():
     if "user" not in session:
         return redirect("/")
-    return render_template("chat.html")
+    return render_template("chat.html", username=session["user"])
 
-@socketio.on("message")
-def handle_message(msg):
-    send(msg, broadcast=True)
+@socketio.on("send_message")
+def handle_message(data):
+    user = session.get("user")
+    if user:
+        emit("receive_message", {
+            "user": user,
+            "type": data["type"],
+            "content": data["content"]
+        }, broadcast=True)
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    socketio.run(app, host="0.0.0.0",
+                 port=int(os.environ.get("PORT", 5000)))
