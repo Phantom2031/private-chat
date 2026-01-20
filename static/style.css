@@ -1,8 +1,7 @@
+/* THEME */
 :root {
   --bg: #0f172a;
   --card: #111827;
-  --accent: #22c55e;
-  --danger: #ef4444;
   --me: #22c55e;
   --other: #1f2933;
   --text: #e5e7eb;
@@ -18,7 +17,7 @@ body.light {
 
 * {
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 body {
@@ -26,58 +25,77 @@ body {
   background: var(--bg);
   color: var(--text);
   height: 100vh;
+}
+
+/* LOGIN */
+.login-body {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 320px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.login-wrapper h1 {
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.login-wrapper input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: none;
+}
+
+.login-wrapper button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #22c55e;
+  font-weight: 600;
 }
 
 /* HEADER */
 header {
+  padding: 12px;
   background: var(--card);
-  padding: 12px 14px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-header span {
-  font-size: 18px;
-  font-weight: 600;
 }
 
 .header-actions button {
-  font-size: 18px;
-  padding: 10px 12px;
   margin-left: 8px;
-  border-radius: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
   border: none;
-  cursor: pointer;
 }
 
-.theme-btn {
-  background: #334155;
-  color: white;
-}
-
-.panic-btn {
-  background: var(--danger);
+.panic {
+  background: #ef4444;
   color: white;
 }
 
 /* CHAT */
 #chat {
-  flex: 1;
   padding: 12px;
   padding-bottom: 90px;
   overflow-y: auto;
+  height: calc(100vh - 120px);
 }
 
 .msg {
-  max-width: 75%;
-  padding: 10px 12px;
+  max-width: 70%;
   margin-bottom: 8px;
+  padding: 10px;
   border-radius: 12px;
-  font-size: 15px;
-  word-wrap: break-word;
 }
 
 .me {
@@ -90,44 +108,39 @@ header span {
   background: var(--other);
 }
 
+/* IMAGE FIX */
+.chat-img {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* AUDIO */
+audio {
+  width: 200px;
+}
+
 /* FOOTER */
 footer {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   background: var(--card);
   padding: 10px;
   display: flex;
   gap: 8px;
-  align-items: center;
-}
-
-footer button {
-  font-size: 18px;
-  padding: 10px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  background: #334155;
-  color: white;
 }
 
 footer input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 10px;
   border-radius: 20px;
   border: none;
-  font-size: 15px;
 }
 
-audio {
-  width: 220px;
-  outline: none;
+footer button {
+  padding: 10px;
+  border-radius: 50%;
+  border: none;
 }
-
-.recording {
-  background: #ef4444 !important;
-}
-
-
