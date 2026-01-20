@@ -7,8 +7,8 @@ app.secret_key = secrets.token_hex(16)
 socketio = SocketIO(app)
 
 USERS = {
-    "user1": "password1",
-    "user2": "password2"
+    "itx_ankelet25": "Hydrogen",
+    "jatin25": "Zinc"
 }
 
 @app.route("/", methods=["GET", "POST"])
@@ -45,3 +45,4 @@ socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 @socketio.on("disconnect")
 def handle_disconnect():
     pass
+
