@@ -120,3 +120,14 @@ footer input {
   border: none;
   font-size: 15px;
 }
+
+audio {
+  width: 220px;
+  outline: none;
+}
+
+.recording {
+  background: #ef4444 !important;
+}
+
+
