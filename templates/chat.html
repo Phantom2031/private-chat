@@ -23,10 +23,7 @@
 
 <footer>
   <button onclick="pickImage()">📎</button>
-
-  <!-- HOLD TO RECORD -->
   <button id="micBtn">🎤</button>
-
   <input id="msg" placeholder="Type a message">
   <button onclick="sendText()">➤</button>
 </footer>
@@ -65,16 +62,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data.type === "audio") {
-  div.classList.add("audio-msg");
+      div.classList.add("audio-msg");
 
-  const audio = document.createElement("audio");
-  audio.controls = true;
-  audio.src = data.content;
-  audio.preload = "metadata";
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "metadata";
+      audio.src = data.content;
 
-  div.appendChild(audio);
-}
+      audio.addEventListener("loadedmetadata", () => {
+        audio.currentTime = 0;
+      });
 
+      div.appendChild(audio);
+    }
 
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= SEND TEXT ================= */
   window.sendText = () => {
-    if (!msgInput) return;
     const text = msgInput.value.trim();
     if (!text) return;
     socket.emit("send_message", { type: "text", content: text });
@@ -90,78 +89,73 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* ================= IMAGE ================= */
-  window.pickImage = () => {
-    if (imageInput) imageInput.click();
-  };
+  window.pickImage = () => imageInput.click();
 
-  if (imageInput) {
-    imageInput.addEventListener("change", () => {
-      const file = imageInput.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        socket.emit("send_message", {
-          type: "image",
-          content: reader.result
-        });
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  /* ================= 🎤 MIC (ANDROID SAFE) ================= */
-  if (micBtn) {
-
-    micBtn.addEventListener("pointerdown", async (e) => {
-      e.preventDefault();
-      chunks = [];
-
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      recorder = new MediaRecorder(stream, {
-        mimeType: "audio/webm;codecs=opus"
-      });
-
-      recorder.ondataavailable = e => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      recorder.start();
-      micBtn.classList.add("recording");
-    });
-
-   const stopRecording = () => {
-  if (!recorder || recorder.state !== "recording") return;
-
-  recorder.stop();
-  micBtn.classList.remove("recording");
-
-  recorder.onstop = () => {
-    stream.getTracks().forEach(t => t.stop());
-
-    if (!chunks.length) return;
-
-    const blob = new Blob(chunks, { type: "audio/webm" });
-
-    // discard very tiny junk clips
-    if (blob.size < 1500) return;
-
+  imageInput.addEventListener("change", () => {
+    const file = imageInput.files[0];
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       socket.emit("send_message", {
-        type: "audio",
-        content: reader.result   // ✅ base64, works everywhere
+        type: "image",
+        content: reader.result
       });
     };
-    reader.readAsDataURL(blob);
+    reader.readAsDataURL(file);
+  });
+
+  /* ================= 🎤 MIC (ANDROID SAFE) ================= */
+  micBtn.addEventListener("pointerdown", async (e) => {
+    e.preventDefault();
+    chunks = [];
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      alert("Microphone permission denied");
+      return;
+    }
+
+    recorder = new MediaRecorder(stream, {
+      mimeType: "audio/webm;codecs=opus"
+    });
+
+    recorder.ondataavailable = e => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+
+    recorder.start();
+    micBtn.classList.add("recording");
+  });
+
+  const stopRecording = () => {
+    if (!recorder || recorder.state !== "recording") return;
+
+    recorder.stop();
+    micBtn.classList.remove("recording");
+
+    recorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+
+      if (!chunks.length) return;
+
+      const blob = new Blob(chunks, { type: "audio/webm" });
+      if (blob.size < 1500) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        socket.emit("send_message", {
+          type: "audio",
+          content: reader.result
+        });
+      };
+      reader.readAsDataURL(blob);
+    };
   };
-};
 
-
-    micBtn.addEventListener("pointerup", stopRecording);
-    micBtn.addEventListener("pointercancel", stopRecording);
-    micBtn.addEventListener("pointerleave", stopRecording);
-  }
+  micBtn.addEventListener("pointerup", stopRecording);
+  micBtn.addEventListener("pointercancel", stopRecording);
+  micBtn.addEventListener("pointerleave", stopRecording);
 
   /* ================= UI ================= */
   window.toggleTheme = () => {
@@ -177,13 +171,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
-
 </body>
 </html>
-
-
-
-
-
-
