@@ -23,23 +23,26 @@
 
 <footer>
   <button onclick="pickImage()">📎</button>
-  <button onclick="pickAudio()">🎧</button>
+
+  <!-- HOLD TO RECORD -->
+  <button id="micBtn">🎤</button>
+
   <input id="msg" placeholder="Type a message">
   <button onclick="sendText()">➤</button>
 </footer>
 
 <input type="file" id="imageInput" accept="image/*" hidden>
-<input type="file" id="audioInput" accept="audio/*" hidden>
 
 <script>
 const socket = io();
 const me = "{{ username }}";
 const chat = document.getElementById("chat");
-
 const imageInput = document.getElementById("imageInput");
-const audioInput = document.getElementById("audioInput");
+const micBtn = document.getElementById("micBtn");
 
-// receive messages
+let recorder, chunks = [];
+
+// RECEIVE
 socket.on("receive_message", data => {
   const div = document.createElement("div");
   div.className = "msg " + (data.user === me ? "me" : "other");
@@ -63,7 +66,7 @@ socket.on("receive_message", data => {
   chat.scrollTop = chat.scrollHeight;
 });
 
-// send text
+// SEND TEXT
 function sendText() {
   const text = msg.value.trim();
   if (!text) return;
@@ -71,7 +74,7 @@ function sendText() {
   msg.value = "";
 }
 
-// image
+// IMAGE
 function pickImage() {
   imageInput.click();
 }
@@ -86,21 +89,38 @@ imageInput.onchange = () => {
   r.readAsDataURL(file);
 };
 
-// audio (file based – stable)
-function pickAudio() {
-  audioInput.click();
-}
+// 🎤 HOLD TO RECORD (WHATSAPP STYLE)
+micBtn.addEventListener("pointerdown", async () => {
+  micBtn.classList.add("recording");
+  chunks = [];
 
-audioInput.onchange = () => {
-  const file = audioInput.files[0];
-  if (!file) return;
-  const r = new FileReader();
-  r.onload = () => {
-    socket.emit("send_message", { type: "audio", content: r.result });
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  recorder = new MediaRecorder(stream);
+  recorder.start();
+
+  recorder.ondataavailable = e => chunks.push(e.data);
+});
+
+micBtn.addEventListener("pointerup", () => {
+  if (!recorder) return;
+
+  recorder.stop();
+  micBtn.classList.remove("recording");
+
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: "audio/webm" });
+    const reader = new FileReader();
+    reader.onload = () => {
+      socket.emit("send_message", {
+        type: "audio",
+        content: reader.result
+      });
+    };
+    reader.readAsDataURL(blob);
   };
-  r.readAsDataURL(file);
-};
+});
 
+// THEME + PANIC
 function toggleTheme() {
   document.body.classList.toggle("light");
 }
