@@ -167,13 +167,24 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   window.panic = () => {
+  // send panic notification to other user
+  socket.emit("send_message", {
+    type: "text",
+    content: "⚠️ WARNING -- Panic button Initiated. Chat closed."
+  });
+
+  // small delay to ensure message is sent
+  setTimeout(() => {
     socket.disconnect();
     chat.innerHTML = "";
     location.reload();
-  };
+  }, 150);
+};
+
 
 });
 </script>
 
 </body>
 </html>
+
