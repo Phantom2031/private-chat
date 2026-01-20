@@ -1,35 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
 <title>Notes</title>
-<style>
-body {
-    font-family: Arial;
-    background: #ece5dd;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-form {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-}
-input, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
-</style>
 </head>
 <body>
-<form method="post">
-    <h3>Notes</h3>
+<div class="login">
+  <form class="login-box" method="post">
+    <h2>Notes</h2>
     <input name="username" placeholder="Username" required>
     <input name="password" type="password" placeholder="Password" required>
-    <button>Login</button>
-</form>
+    <button>Enter</button>
+  </form>
+</div>
 </body>
 </html>
