@@ -102,36 +102,61 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-  // 🎤 HOLD TO RECORD
-  micBtn.addEventListener("pointerdown", async () => {
-    micBtn.classList.add("recording");
-    chunks = [];
+let recorder;
+let chunks = [];
+let stream;
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    recorder = new MediaRecorder(stream);
-    recorder.start();
+ // 🎤 HOLD TO RECORD — ANDROID SAFE
+micBtn.addEventListener("pointerdown", async (e) => {
+  e.preventDefault();
 
-    recorder.ondataavailable = e => chunks.push(e.data);
+  chunks = [];
+
+  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+  recorder = new MediaRecorder(stream, {
+    mimeType: "audio/webm;codecs=opus"
   });
 
-  micBtn.addEventListener("pointerup", () => {
-    if (!recorder) return;
+  recorder.ondataavailable = (e) => {
+    if (e.data.size > 0) {
+      chunks.push(e.data);
+    }
+  };
 
-    recorder.stop();
-    micBtn.classList.remove("recording");
+  recorder.start();
+  micBtn.classList.add("recording");
+});
 
-    recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: "audio/webm" });
-      const reader = new FileReader();
-      reader.onload = () => {
-        socket.emit("send_message", {
-          type: "audio",
-          content: reader.result
-        });
-      };
-      reader.readAsDataURL(blob);
+// stop on release
+function stopRecording() {
+  if (!recorder || recorder.state !== "recording") return;
+
+  recorder.stop();
+  micBtn.classList.remove("recording");
+
+  recorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+
+    if (chunks.length === 0) return; // prevents 0:00 audio
+
+    const blob = new Blob(chunks, { type: "audio/webm" });
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      socket.emit("send_message", {
+        type: "audio",
+        content: reader.result
+      });
     };
-  });
+
+    reader.readAsDataURL(blob);
+  };
+}
+
+micBtn.addEventListener("pointerup", stopRecording);
+micBtn.addEventListener("pointercancel", stopRecording);
+micBtn.addEventListener("pointerleave", stopRecording);
 
   // THEME
   window.toggleTheme = function () {
@@ -151,5 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
