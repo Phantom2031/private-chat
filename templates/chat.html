@@ -65,13 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (data.type === "audio") {
-      div.classList.add("audio-msg");
-      div.innerHTML = `
-        <audio controls preload="metadata">
-          <source src="${data.content}" type="audio/webm">
-        </audio>
-      `;
-    }
+  div.classList.add("audio-msg");
+
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.src = data.content;
+  audio.preload = "metadata";
+
+  div.appendChild(audio);
+}
+
 
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
@@ -178,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
