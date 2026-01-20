@@ -59,7 +59,14 @@ socket.on("receive_message", data => {
   }
 
   if (data.type === "audio") {
-    div.innerHTML = `<audio controls src="${data.content}"></audio>`;
+  div.classList.add("audio-msg");
+  div.innerHTML = `
+    <audio controls preload="metadata">
+      <source src="${data.content}" type="audio/webm">
+    </audio>
+  `;
+}
+
   }
 
   chat.appendChild(div);
@@ -134,3 +141,4 @@ function panic() {
 
 </body>
 </html>
+
