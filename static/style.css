@@ -187,6 +187,24 @@ footer button {
   touch-action: manipulation;
 }
 
+/* ===== STATUS DOT ===== */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-dot.online {
+  background: #22c55e;
+}
+
+.status-dot.offline {
+  background: #000000;
+}
+
+
 
 
 
