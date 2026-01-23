@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inbox</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+  <span>📥 Inbox</span>
+
+  <div class="header-actions">
+    <!-- online status placeholder -->
+    <span class="status-dot offline"></span>
+
+    <!-- clear button (disabled for now) -->
+    <button disabled>🧹</button>
+
+    <!-- back to chat -->
+    <button onclick="location.href='/chat'">⬅️</button>
+  </div>
+</header>
+
+<div id="chat">
+  <!-- placeholder messages -->
+  <div class="msg other">
+    Offline messages will appear here.
+  </div>
+</div>
+
+</body>
+</html>
 
